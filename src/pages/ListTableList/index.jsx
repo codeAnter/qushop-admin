@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer } from 'antd';
+import { Button, message, Input, Drawer, Tag } from 'antd';
 import React, { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
@@ -10,9 +10,8 @@ import UpdateForm from './components/UpdateForm';
 import { queryRule, updateRule, addRule, removeRule } from './service';
 import { query as queryOrder } from '@/services/order';
 
-
 /**
- * 
+ *
  * 添加节点
  * @param fields
  */
@@ -98,12 +97,7 @@ const TableList = () => {
   const intl = useIntl();
   const columns = [
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.updateForm.name"
-          defaultMessage="订单编号"
-        />
-      ),
+      title: <FormattedMessage id="pages.searchTable.updateForm.name" defaultMessage="订单编号" />,
       dataIndex: 'number',
       tip: '订单编号',
       render: (dom, entity) => {
@@ -128,54 +122,63 @@ const TableList = () => {
       dataIndex: 'order_total',
       sorter: true,
       hideInForm: true,
-      renderText: (val,item ) => `${item.order_currency}${val}`
+      renderText: (val, item) => `${item.order_currency}${val}`,
     },
     {
       title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="状态" />,
       dataIndex: 'post_status',
       hideInForm: true,
       valueEnum: {
-        "wc-cancelled": {
+        'wc-cancelled': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="已取消" />
+            <Tag color="error">
+              <FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="已取消" />
+            </Tag>
           ),
           status: 'wc-cancelled',
         },
-        "wc-processing": {
+        'wc-processing': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="进行中" />
+            <Tag color="processing">
+              <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="进行中" />
+            </Tag>
           ),
           status: 'wc-processing',
         },
-        "wc-completed": {
+        'wc-completed': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="完成" />
+            <Tag color="success">
+              <FormattedMessage id="pages.searchTable.nameStatus.completed" defaultMessage="完成" />
+            </Tag>
           ),
           status: 'wc-completed',
         },
-        "wc-pending": {
+        'wc-pending': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.abnormal" defaultMessage="待处理" />
+            <Tag color="warning">
+              <FormattedMessage
+                id="pages.searchTable.nameStatus.abnormal"
+                defaultMessage="待处理"
+              />
+            </Tag>
           ),
           status: 'wc-pending',
         },
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.fulfillmentStatus" defaultMessage="发货状态" />,
+      title: (
+        <FormattedMessage id="pages.searchTable.fulfillmentStatus" defaultMessage="发货状态" />
+      ),
       dataIndex: 'fulfillment_status',
       hideInForm: true,
       valueEnum: {
-        "fulfilled": {
-          text: (
-            <FormattedMessage id="pages.searchTable.fulfilled" defaultMessage="已发货" />
-          ),
+        fulfilled: {
+          text: <FormattedMessage id="pages.searchTable.fulfilled" defaultMessage="已发货" />,
           status: 'fulfilled',
         },
-        "unfulfilled": {
-          text: (
-            <FormattedMessage id="pages.searchTable.unfulfilled" defaultMessage="未发货" />
-          ),
+        unfulfilled: {
+          text: <FormattedMessage id="pages.searchTable.unfulfilled" defaultMessage="未发货" />,
           status: 'unfulfilled',
         },
       },
@@ -213,18 +216,16 @@ const TableList = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="新建" />
           </Button>,
         ]}
-        request={async (params, sorter, filter) => 
-          {
-            const res = await queryOrder({ ...params, sorter, filter })
-            return {data: res.data, success:true, total:100}
-        }
-      }
+        request={async (params, sorter, filter) => {
+          const res = await queryOrder({ ...params, sorter, filter });
+          return { data: res.data, success: true, total: 100 };
+        }}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows),
         }}
       />
-      {selectedRowsState?.length > 0 && (
+      {selectedRowsState && selectedRowsState.length > 0 && (
         <FooterToolbar
           extra={
             <div>
